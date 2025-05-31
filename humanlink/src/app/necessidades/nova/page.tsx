@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Input from '@/components/Input/Input'
 import Select from '@/components/Select/Select'
 import Button from '@/components/Button/Button'
@@ -19,7 +19,6 @@ export default function NovaNecessidadePage() {
     estado: '',
   })
 
-  const numeroRef = useRef<HTMLInputElement | null>(null)
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target
@@ -40,9 +39,6 @@ export default function NovaNecessidadePage() {
               cidade: data.localidade || '',
               estado: data.uf || ''
             }))
-            setTimeout(() => {
-              numeroRef.current?.focus()
-            }, 100)
           }
         })
         .catch(err => console.error('Erro ao buscar CEP:', err))
@@ -106,7 +102,7 @@ export default function NovaNecessidadePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input label="Número" name="numero" value={form.numero} onChange={handleChange} required ref={numeroRef} />
+          <Input label="Número" name="numero" value={form.numero} onChange={handleChange} required />
           <Input label="Bairro" name="bairro" value={form.bairro} onChange={handleChange} required />
         </div>
 
