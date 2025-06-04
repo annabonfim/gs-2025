@@ -15,10 +15,31 @@ export default function LoginPage() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Tentando login com:', form)
-    // Aqui você vai chamar sua API de autenticação
+    try {
+      const res = await fetch('http://localhost:8080/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        await fetch('/api/set-cookie', {
+          method: 'POST',
+          body: JSON.stringify({ userId: data.id }),
+        })
+
+        window.location.href = '/dashboard'
+      } else {
+        alert('Credenciais inválidas. Tente novamente.')
+      }
+    } catch (err) {
+      alert('Erro ao tentar logar. Tente novamente mais tarde.')
+      console.error(err)
+    }
   }
 
   return (

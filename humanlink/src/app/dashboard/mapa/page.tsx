@@ -1,0 +1,38 @@
+'use client'
+
+import dynamic from 'next/dynamic'
+import 'leaflet/dist/leaflet.css'
+const Map = dynamic(() => import('@/components/Map/Map'), { ssr: false })
+import Header from '@/components/Header/Header'
+import Footer from '@/components/Footer/Footer'
+
+export default function MapaPage() {
+  return (
+    <>
+      <Header />
+      <main className="min-h-screen bg-[#FDF7F0] p-4">
+        <h1 className="text-2xl font-bold text-[#0C3B5D] text-center mb-4">Mapa de Pontos Importantes</h1>
+
+        <div className="h-[70vh] w-full max-w-5xl mx-auto rounded shadow overflow-hidden">
+          <Map />
+        </div>
+
+        <div className="flex gap-4 justify-center mt-4 max-w-5xl mx-auto text-[#0C3B5D]">
+          <div className="flex items-center gap-2">
+            <img src="/shelter.png" alt="Abrigo" className="w-6 h-8" />
+            <span>Abrigo</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <img src="/donation.png" alt="Ponto de Doação" className="w-6 h-8" />
+            <span>Ponto de Doação</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <img src="/medical.png" alt="Atendimento Médico" className="w-6 h-8" />
+            <span>Atendimento Médico</span>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  )
+}
