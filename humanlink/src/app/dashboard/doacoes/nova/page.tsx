@@ -7,6 +7,8 @@ import TextArea from '@/components/TextArea/TextArea'
 import Button from '@/components/Button/Button'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import api from '@/services/api'
+import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function NovaDoacaoPage() {
   const [form, setForm] = useState({
@@ -29,103 +31,144 @@ export default function NovaDoacaoPage() {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    alert('Doação registrada com sucesso!')
+
+    if (typeof window === 'undefined') return;
+
+    try {
+      const payload = {
+        idAreaDesastre: 1,
+        quantidadeDoacao: Number(form.quantidade),
+        descricao: form.descricao,
+        destino: form.destino,
+        nomeDoador: form.nome,
+        contato: form.contato,
+        endereco: {
+          cep: form.cep,
+          logradouro: form.endereco,
+          numero: form.numero,
+          complemento: form.complemento,
+          cidade: form.cidade,
+          estado: form.estado,
+        },
+        tipoDoacao: form.tipo,
+        dataDoacao: new Date().toISOString(),
+        idUsuario: Number(localStorage.getItem('authId'))
+      }
+
+      console.log('Payload final enviado:', payload)
+
+      const res = await api.post('/registro-doacao', payload)
+
+      if (res.status === 200 || res.status === 201) {
+        alert('Doação registrada com sucesso!')
+      } else {
+        alert('Erro ao registrar doação.')
+      }
+    } catch (error: any) {
+      console.error('Erro ao enviar doação:', error)
+      if (error.response?.data) {
+        console.error('Resposta do backend:', error.response.data)
+      }
+      alert('Erro de conexão ao registrar a doação.')
+    }
   }
 
   return (
-    <>
-      <Header />
-      <main className="min-h-screen bg-[#FDF7F0] px-6 py-10 flex justify-center">
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-md p-8 max-w-2xl w-full space-y-4">
-          <h1 className="text-2xl font-bold text-[#0C3B5D] text-center mb-4">Registrar Nova Doação</h1>
+    <ProtectedRoute>
+      <>
+        <Header />
+        <main className="min-h-screen bg-[#FDF7F0] px-6 py-10 flex justify-center">
+          <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-md p-8 max-w-2xl w-full space-y-4">
+            <h1 className="text-2xl font-bold text-[#0C3B5D] text-center mb-4">Registrar Nova Doação</h1>
 
-          <Select
-            label="Tipo de Doação"
-            name="tipo"
-            value={form.tipo}
-            onChange={handleChange}
-            options={[
-              { value: 'alimento', label: 'Alimento' },
-              { value: 'agua', label: 'Água' },
-              { value: 'roupa', label: 'Roupa' },
-              { value: 'higiene', label: 'Kit de Higiene' },
-              { value: 'medicamento', label: 'Medicamento' },
-              { value: 'outros', label: 'Outros' },
-            ]}
-            required
-          />
+            <Select
+              label="Tipo de Doação"
+              name="tipo"
+              value={form.tipo}
+              onChange={handleChange}
+              options={[
+                { value: 'alimento', label: 'Alimento' },
+                { value: 'agua', label: 'Água' },
+                { value: 'roupa', label: 'Roupa' },
+                { value: 'higiene', label: 'Kit de Higiene' },
+                { value: 'medicamento', label: 'Medicamento' },
+                { value: 'outros', label: 'Outros' },
+              ]}
+              required
+            />
 
-          <Input
-            label="Quantidade"
-            name="quantidade"
-            type="number"
-            value={form.quantidade}
-            onChange={handleChange}
-            required
-          />
+            <Input
+              label="Quantidade"
+              name="quantidade"
+              type="number"
+              value={form.quantidade}
+              onChange={handleChange}
+              required
+            />
 
-          <TextArea
-            label="Descrição"
-            name="descricao"
-            value={form.descricao}
-            onChange={handleChange}
-            rows={4}
-            required
-          />
+            <TextArea
+              label="Descrição"
+              name="descricao"
+              value={form.descricao}
+              onChange={handleChange}
+              rows={4}
+              required
+            />
 
-          <Input
-            label="Destino"
-            name="destino"
-            value={form.destino}
-            onChange={handleChange}
-            required
-          />
+            <Input
+              label="Destino"
+              name="destino"
+              value={form.destino}
+              onChange={handleChange}
+              required
+            />
 
-          <Input
-            label="Nome do Doador"
-            name="nome"
-            value={form.nome}
-            onChange={handleChange}
-            required
-          />
+            <Input
+              label="Nome do Doador"
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
+              required
+            />
 
-          <Input
-            label="Telefone ou E-mail"
-            name="contato"
-            value={form.contato}
-            onChange={handleChange}
-            required
-          />
+            <Input
+              label="Telefone ou E-mail"
+              name="contato"
+              value={form.contato}
+              onChange={handleChange}
+              required
+            />
 
-          <fieldset className="border rounded-md p-4">
-            <legend className="text-sm font-semibold text-[#0C3B5D] mb-2">Informar local de retirada (opcional)</legend>
+            <fieldset className="border rounded-md p-4">
+              <legend className="text-sm font-semibold text-[#0C3B5D] mb-2">Informar local de retirada (opcional)</legend>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input label="CEP" name="cep" value={form.cep || ''} onChange={handleChange} />
-              <Input label="Endereço" name="endereco" value={form.endereco || ''} onChange={handleChange} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input label="CEP" name="cep" value={form.cep || ''} onChange={handleChange} />
+                <Input label="Endereço" name="endereco" value={form.endereco || ''} onChange={handleChange} />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <Input label="Número" name="numero" value={form.numero || ''} onChange={handleChange} />
+                <Input label="Complemento" name="complemento" value={form.complemento || ''} onChange={handleChange} />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <Input label="Cidade" name="cidade" value={form.cidade || ''} onChange={handleChange} />
+                <Input label="Estado" name="estado" value={form.estado || ''} onChange={handleChange} />
+              </div>
+            </fieldset>
+
+            <div className="flex justify-center pt-4">
+              <Button type="submit" className="bg-[#0C3B5D] text-white px-6 py-2 rounded-md hover:bg-blue-900">
+                Registrar
+              </Button>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              <Input label="Número" name="numero" value={form.numero || ''} onChange={handleChange} />
-              <Input label="Complemento" name="complemento" value={form.complemento || ''} onChange={handleChange} />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              <Input label="Cidade" name="cidade" value={form.cidade || ''} onChange={handleChange} />
-              <Input label="Estado" name="estado" value={form.estado || ''} onChange={handleChange} />
-            </div>
-          </fieldset>
-
-          <div className="flex justify-center pt-4">
-            <Button type="submit" className="bg-[#0C3B5D] text-white px-6 py-2 rounded-md hover:bg-blue-900">
-              Registrar
-            </Button>
-          </div>
-        </form>
-      </main>
-      <Footer />
-    </>
+          </form>
+        </main>
+        <Footer />
+      </>
+    </ProtectedRoute>
   )
 }

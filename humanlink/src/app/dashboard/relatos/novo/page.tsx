@@ -1,11 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import axios from 'axios'
+import api from '@/services/api'
 import Input from '@/components/Input/Input'
 import Select from '@/components/Select/Select'
 import Button from '@/components/Button/Button'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import ProtectedPage from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function NovoRelatoPage() {
   const [form, setForm] = useState({
@@ -38,26 +41,57 @@ export default function NovoRelatoPage() {
     setMidiaPreview(previews)
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    alert('Relato enviado com sucesso!')
-    setForm({
-      nome: '',
-      titulo: '',
-      mensagem: '',
-      endereco: '',
-      cidade: '',
-      estado: '',
-      tipo_desastre: '',
-      tipo_desastre_outro: '',
-      urgencia: '',
-      status: 'pendente',
-    })
-    setMidiaPreview([])
+    console.log('Formulário original:', form)
+    try {
+      const usuarioId = localStorage.getItem('usuarioId')
+      const payload = {
+        nome: form.nome,
+        titulo: form.titulo,
+        mensagem: form.mensagem,
+        endereco: form.endereco || undefined,
+        cidade: form.cidade,
+        estado: form.estado,
+        tipo_desastre: form.tipo_desastre,
+        tipo_desastre_outro: form.tipo_desastre === 'outro' ? form.tipo_desastre_outro : undefined,
+        urgencia: form.urgencia,
+        status: 'pendente',
+        id_usuario: usuarioId ? parseInt(usuarioId) : undefined,
+        id_desastre: 1
+      }
+      console.log('Payload final enviado para API:', payload)
+      await api.post('/relatos', payload)
+      alert('Relato enviado com sucesso!')
+      setForm({
+        nome: '',
+        titulo: '',
+        mensagem: '',
+        endereco: '',
+        cidade: '',
+        estado: '',
+        tipo_desastre: '',
+        tipo_desastre_outro: '',
+        urgencia: '',
+        status: 'pendente',
+      })
+      setMidiaPreview([])
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Erro Axios:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          headers: error.response?.headers
+        })
+      } else {
+        console.error('Erro inesperado:', error)
+      }
+      alert('Erro ao enviar relato. Tente novamente.')
+    }
   }
 
   return (
-    <>
+    <ProtectedPage>
       <Header />
       <main className="min-h-screen bg-[#FDF7F0] px-6 py-10 flex justify-center">
         <form
@@ -244,6 +278,6 @@ export default function NovoRelatoPage() {
         </form>
       </main>
       <Footer />
-    </>
+    </ProtectedPage>
   )
 }

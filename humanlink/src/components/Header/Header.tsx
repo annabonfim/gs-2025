@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 export default function Header() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
-  const [notificacoes, setNotificacoes] = useState(3); // Substitua por dado real futuramente
+  const [notificacoes, setNotificacoes] = useState(0);
   const [visto, setVisto] = useState(false);
   const router = useRouter()
 
@@ -16,6 +16,15 @@ export default function Header() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    async function fetchNotificacoes() {
+      // Simulação de requisição assíncrona
+      const res = await new Promise(resolve => setTimeout(() => resolve({ naoLidas: 3 }), 1000));
+      setNotificacoes((res as { naoLidas: number }).naoLidas);
+    }
+    fetchNotificacoes();
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -39,10 +48,9 @@ export default function Header() {
         <img src="/logo-sem-fundo.png" alt="Logo HumanLink" className="h-12 w-auto" />
       </Link>
       <nav className="space-x-4 flex items-center">
-        {['/', '/login', '/cadastro', '/recursos'].includes(pathname) && (
+        {['/', '/login', '/cadastro', '/recursos'].includes(pathname) && !pathname.startsWith('/dashboard') && (
           <>
             <Link href="/" className="text-[#0C3B5D] hover:underline">Início</Link>
-            <Link href="/recursos" className="text-[#0C3B5D] hover:underline">Recursos</Link>
             <Link href="/sobre" className="text-[#0C3B5D] hover:underline">Sobre</Link>
           </>
         )}
@@ -68,11 +76,6 @@ export default function Header() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#0C3B5D]">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                 </svg>
-                {!visto && notificacoes > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
-                    {notificacoes}
-                  </span>
-                )}
               </button>
             </div>
 
@@ -90,7 +93,8 @@ export default function Header() {
                   <Link href="/dashboard/perfil" className="block px-4 py-2 hover:bg-gray-100">Editar Perfil</Link>
                   <button
                     onClick={() => {
-                      router.push('/')
+                      localStorage.removeItem('authToken');
+                      router.push('/');
                     }}
                     className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
                   >

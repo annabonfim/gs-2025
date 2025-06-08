@@ -1,41 +1,33 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Card from '@/components/Card/Card'
 import SectionTitle from '@/components/SectionTitle/SectionTitle'
 import Footer from '@/components/Footer/Footer'
 import Header from '@/components/Header/Header'
 import Link from 'next/link'
-
-const doacoes = [
-  {
-    id: 1,
-    titulo: 'Roupas de frio disponíveis',
-    descricao: 'Casacos e cobertores em bom estado para quem está em situação de rua.',
-    status: 'disponivel',
-    autor: 'Maria S.',
-    hora: 'Há 2 horas',
-  },
-  {
-    id: 2,
-    titulo: 'Kit de higiene pessoal',
-    descricao: 'Shampoo, sabonete, escova e pasta de dente.',
-    status: 'disponivel',
-    autor: 'ONG Esperança',
-    hora: 'Hoje, 08:30',
-  },
-  {
-    id: 3,
-    titulo: 'Cestas básicas',
-    descricao: 'Alimentos não perecíveis prontos para retirada no centro comunitário.',
-    status: 'concluido',
-    autor: 'João P.',
-    hora: 'Ontem',
-  },
-]
+import api from '@/services/api'
+import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function DoacoesPage() {
+  const [doacoes, setDoacoes] = useState([])
+
+  useEffect(() => {
+    async function fetchDoacoes() {
+      try {
+        const res = await api.get('/registro-doacao')
+        const data = res.data
+        setDoacoes(data)
+      } catch (error) {
+        console.error('Erro ao buscar doações:', error)
+      }
+    }
+
+    fetchDoacoes()
+  }, [])
+
   return (
-    <>
+    <ProtectedRoute>
       <Header />
       <main className="min-h-screen bg-[#FDF7F0] px-6 py-10">
         <div className="flex justify-between items-center mb-6">
@@ -45,20 +37,20 @@ export default function DoacoesPage() {
           </Link>
         </div>
         <div className="space-y-6">
-          {doacoes.map((doacao) => (
+          {doacoes.map((doacao: any) => (
             <Card
-              key={doacao.id}
-              title={doacao.titulo}
-              description={doacao.descricao}
-              status={doacao.status as 'disponivel' | 'urgente' | 'concluido'}
-              autor={doacao.autor}
-              hora={doacao.hora}
-              href={`/dashboard/doacoes/${doacao.id}`}
+              key={doacao.idRegistro}
+              title={doacao.tipoDoacao || 'Doação'}
+              description={doacao.descricao || 'Sem descrição'}
+              status="disponivel"
+              autor={doacao.nomeDoador || 'Anônimo'}
+              hora={new Date(doacao.dataDoacao || '').toLocaleString()}
+              href={`/dashboard/doacoes/${doacao.idRegistro}`}
             />
           ))}
         </div>
       </main>
       <Footer />
-    </>
+    </ProtectedRoute>
   )
 }

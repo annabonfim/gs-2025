@@ -13,21 +13,21 @@ export default function OportunidadesVoluntarioPage() {
       titulo: 'Entrega de alimentos no centro',
       descricao: 'Precisamos de voluntários para ajudar na entrega de marmitas no centro da cidade. O ponto de encontro será na praça principal às 11h.',
       local: 'Praça Central, São Paulo - SP',
-      horario: 'Hoje, às 11h',
+      horario: '20/06, às 11h',
     },
     {
       id: 2,
       titulo: 'Ajuda em abrigo comunitário',
       descricao: 'O abrigo na zona norte precisa de apoio com a organização de doações e atendimento às famílias.',
       local: 'Av. das Palmeiras, 123 - Zona Norte',
-      horario: 'Amanhã, das 9h às 14h',
+      horario: '21/06, das 9h às 14h',
     },
     {
       id: 3,
       titulo: 'Distribuição de kits de higiene',
       descricao: 'Voluntários para distribuir kits de higiene em bairros afetados pelas enchentes.',
       local: 'Escola Municipal Aurora, Rua das Rosas, 45',
-      horario: 'Sábado, às 10h',
+      horario: '22/06, às 10h',
     },
   ]
 

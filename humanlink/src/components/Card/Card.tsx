@@ -71,17 +71,17 @@ export default function Card({ id, title, subtitle, tags, href, description, sta
     </div>
   )
 
-  if (id) {
+  if (href) {
     return (
-      <Link href={`/doacoes/${id}`}>
+      <Link href={href}>
         {cardContent}
       </Link>
     )
   }
 
-  if (href) {
+  if (id) {
     return (
-      <Link href={href}>
+      <Link href={`/doacoes/${id}`}>
         {cardContent}
       </Link>
     )

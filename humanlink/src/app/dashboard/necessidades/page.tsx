@@ -5,6 +5,7 @@ import SectionTitle from '@/components/SectionTitle/SectionTitle'
 import Card from '@/components/Card/Card'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 type Necessidade = {
   id: number
@@ -17,30 +18,23 @@ type Necessidade = {
 
 export default function NecessidadesPage() {
   const [necessidades, setNecessidades] = useState<Necessidade[]>([])
-    useEffect(() => {
-    // Substituir essa parte por uma chamada real à API futuramente
-    setNecessidades([
-      {
-        id: 1,
-        titulo: 'Doação de alimentos para família em situação de risco',
-        categoria: 'Alimento',
-        urgencia: 'Alta',
-        cidade: 'São Paulo',
-        estado: 'SP'
-      },
-      {
-        id: 2,
-        titulo: 'Medicamentos para idosos',
-        categoria: 'Medicamento',
-        urgencia: 'Crítica',
-        cidade: 'Belo Horizonte',
-        estado: 'MG'
+  useEffect(() => {
+    async function fetchNecessidades() {
+      try {
+        const res = await fetch('https://humanlink-api-production.up.railway.app/necessidades')
+        if (!res.ok) throw new Error('Erro ao buscar necessidades')
+        const data = await res.json()
+        setNecessidades(data)
+      } catch (error) {
+        console.error('Erro ao carregar necessidades:', error)
       }
-    ])
+    }
+
+    fetchNecessidades()
   }, [])
 
   return (
-    <>
+    <ProtectedRoute>
       <Header />
       <main className="min-h-screen bg-[#FDF7F0] px-6 py-10">
         <SectionTitle title="Necessidades Cadastradas" />
@@ -65,6 +59,6 @@ export default function NecessidadesPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </ProtectedRoute>
   )
 }

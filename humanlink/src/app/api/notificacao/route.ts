@@ -1,8 +1,6 @@
-
-
 import { NextRequest, NextResponse } from 'next/server'
 
-const API_URL = '' // Insira aqui a URL da sua API Java
+const API_URL = 'https://humanlink-api-production.up.railway.app/humanlink' // Insira aqui a URL da sua API Java
 
 export async function GET() {
   try {

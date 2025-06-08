@@ -5,10 +5,11 @@ import 'leaflet/dist/leaflet.css'
 const Map = dynamic(() => import('@/components/Map/Map'), { ssr: false })
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function MapaPage() {
   return (
-    <>
+    <ProtectedRoute>
       <Header />
       <main className="min-h-screen bg-[#FDF7F0] p-4">
         <h1 className="text-2xl font-bold text-[#0C3B5D] text-center mb-4">Mapa de Pontos Importantes</h1>
@@ -33,6 +34,6 @@ export default function MapaPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </ProtectedRoute>
   )
 }

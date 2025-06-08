@@ -1,22 +1,20 @@
-
-
 import { NextResponse } from 'next/server'
 
-let usuarios = [
-  { id: 1, nome: 'Joana Silva', email: 'joana@example.com' },
-  { id: 2, nome: 'Carlos Lima', email: 'carlos@example.com' },
-]
+const API_BASE = 'https://humanlink-api-production.up.railway.app/humanlink/usuario'
 
 export async function GET() {
-  return NextResponse.json(usuarios)
+  const res = await fetch(API_BASE)
+  const data = await res.json()
+  return NextResponse.json(data)
 }
 
 export async function POST(req: Request) {
-  const data = await req.json()
-  const novoUsuario = {
-    id: usuarios.length + 1,
-    ...data,
-  }
-  usuarios.push(novoUsuario)
-  return NextResponse.json(novoUsuario, { status: 201 })
+  const body = await req.json()
+  const res = await fetch(API_BASE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const data = await res.json()
+  return NextResponse.json(data, { status: res.status })
 }

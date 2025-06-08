@@ -1,19 +1,28 @@
-'use server'
+'use client'
 
-import { type ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies'
-
-export function setUserCookie(cookieStore: ResponseCookies, userId: string) {
-  cookieStore.set('userId', userId, {
-    httpOnly: true,
-    path: '/',
-    maxAge: 60 * 60 * 24, // 1 dia
-  })
+export function setAuthToken(token: string) {
+  const expiry = new Date().getTime() + 24 * 60 * 60 * 1000 // 1 dia em ms
+  const tokenData = { token, expiry }
+  localStorage.setItem('authToken', JSON.stringify(tokenData))
 }
 
-export function getUserIdFromCookie(cookieStore: ResponseCookies): string | null {
-  return cookieStore.get('userId')?.value || null
+export function getAuthToken(): string | null {
+  const item = localStorage.getItem('authToken')
+  if (!item) return null
+
+  try {
+    const { token, expiry } = JSON.parse(item)
+    if (new Date().getTime() > expiry) {
+      localStorage.removeItem('authToken')
+      return null
+    }
+    return token
+  } catch {
+    localStorage.removeItem('authToken')
+    return null
+  }
 }
 
-export function clearUserCookie(cookieStore: ResponseCookies) {
-  cookieStore.delete('userId')
+export function clearAuthToken() {
+  localStorage.removeItem('authToken')
 }

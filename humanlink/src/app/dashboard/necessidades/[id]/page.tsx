@@ -1,11 +1,10 @@
-
-
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 type Necessidade = {
   id: number
@@ -63,7 +62,7 @@ export default function NecessidadeDetalhesPage() {
   }, [id])
 
   return (
-    <>
+    <ProtectedRoute>
       <Header />
       <main className="min-h-screen bg-[#FDF7F0] px-6 py-10 flex justify-center">
         <div className="bg-white shadow-md rounded-md p-8 max-w-2xl w-full space-y-4">
@@ -86,6 +85,6 @@ export default function NecessidadeDetalhesPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </ProtectedRoute>
   )
 }

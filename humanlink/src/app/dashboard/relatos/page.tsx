@@ -1,67 +1,63 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '@/services/api';
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import ProtectedPage from '@/components/ProtectedRoute/ProtectedRoute';
 
 interface Relato {
   id: number;
   nome: string;
   titulo: string;
   mensagem: string;
-  data: string;
+  data: string | Date;
   midiaPreview?: string[];
 }
 
 export default function RelatosPage() {
-  const [relatos, setRelatos] = useState<Relato[]>([
-    {
-      id: 1,
-      nome: 'Joana',
-      titulo: 'Abrigo disponível na zona norte',
-      mensagem:
-        'Consegui abrigo no centro comunitário da zona norte. Estava com minha família sem um local seguro desde ontem e fomos muito bem recebidos por voluntários. Há ainda espaço para mais famílias, especialmente com crianças pequenas. Recomendo que venham até aqui quem estiver em necessidade.',
-      data: '02/06/2025',
-      midiaPreview: ['/abrigo.png'],
-    },
-    {
-      id: 2,
-      nome: 'Carlos',
-      titulo: 'Crise na região da ponte: falta de água e desidratação',
-      mensagem:
-        'A situação na região da ponte está crítica. Além da falta de água potável, muitas pessoas estão começando a apresentar sintomas de desidratação. Precisamos urgentemente de doações, especialmente garrafas de água, pastilhas purificadoras e alimentos não perecíveis.',
-      data: '01/06/2025',
-    },
-    {
-      id: 3,
-      nome: 'Fernanda',
-      titulo: 'Mutirão de distribuição de marmitas no bairro São Pedro',
-      mensagem:
-        'Estamos organizando um mutirão de distribuição de marmitas na escola municipal do bairro São Pedro. Hoje conseguimos entregar mais de 300 refeições. Quem puder ajudar com ingredientes ou mesmo com transporte, será muito bem-vindo!',
-      data: '01/06/2025',
-    },
-    {
-      id: 4,
-      nome: 'Rafael',
-      titulo: 'Limpeza das ruas da Vila Esperança após alagamentos',
-      mensagem:
-        'Voluntários estão atuando na limpeza das ruas da Vila Esperança após os alagamentos. Há muita lama e entulho acumulado, e precisamos de equipamentos de proteção e ferramentas como pás, vassouras e luvas. Agradecemos todo o apoio recebido até agora!',
-      data: '31/05/2025',
-    },
-    {
-      id: 5,
-      nome: 'Luiza',
-      titulo: 'Coleta de doações de roupas na igreja Santa Clara',
-      mensagem:
-        'Estamos coletando doações de roupas para adultos e crianças na igreja Santa Clara. Muitos moradores perderam tudo com a enchente. As doações podem ser entregues até às 17h. Itens como roupas íntimas novas, cobertores e calçados também são bem-vindos.',
-      data: '30/05/2025',
-    },
-  ]);
+  const [relatos, setRelatos] = useState<Relato[]>([]);
+
+  useEffect(() => {
+    async function fetchRelatos() {
+      try {
+        const response = await api.get('/relatos');
+        const dadosAPI = response.data;
+
+        const dadosFiltrados = dadosAPI.filter((r: Relato) => r.titulo !== 'Abrigo disponível na zona norte');
+
+        const relatoFixo = {
+          id: 0,
+          nome: 'Joana',
+          titulo: 'Abrigo disponível na zona norte',
+          mensagem:
+            'Consegui abrigo no centro comunitário da zona norte. Estava com minha família sem um local seguro desde ontem e fomos muito bem recebidos por voluntários. Há ainda espaço para mais famílias, especialmente com crianças pequenas. Recomendo que venham até aqui quem estiver em necessidade.',
+          data: '02/06/2025',
+          midiaPreview: ['/abrigo.png'],
+        };
+
+        const dadosComRelatoFixo = [relatoFixo, ...dadosFiltrados]
+          .map((relato) => ({
+            ...relato,
+            data:
+              typeof relato.data === 'string' && !isNaN(Date.parse(relato.data))
+                ? new Date(relato.data)
+                : new Date(),
+          }))
+          .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+        setRelatos(dadosComRelatoFixo);
+      } catch (error) {
+        console.error('Erro ao buscar relatos da API:', error);
+      }
+    }
+
+    fetchRelatos();
+  }, []);
 
   const [relatosExpandido, setRelatosExpandido] = useState<{ [id: number]: boolean }>({});
 
   return (
-    <>
+    <ProtectedPage>
       <Header />
       <main className="bg-[#FDF7F0] px-6 py-10 flex flex-col items-center">
         <div className="w-full max-w-2xl flex justify-end mb-4">
@@ -81,9 +77,9 @@ export default function RelatosPage() {
               const textoCurto = relato.mensagem.length > 200 && !expandido;
 
               return (
-                <div key={relato.id} className="bg-white border border-gray-200 rounded shadow-sm p-4">
+                <div key={`relato-${relato.id ?? relato.titulo}-${Math.random().toString(36).substr(2, 5)}`} className="bg-white border border-gray-200 rounded shadow-sm p-4">
                   <div className="text-sm text-gray-500 mb-2 font-medium">
-                    {relato.nome} • {relato.data}
+                    {relato.nome}
                   </div>
                   <h2 className="text-lg font-semibold text-[#0C3B5D] mb-1">{relato.titulo}</h2>
                   <p className="text-gray-800">
@@ -105,12 +101,12 @@ export default function RelatosPage() {
 
                   {Array.isArray(relato.midiaPreview) && relato.midiaPreview.length > 0 && (
                     <div className="mt-4 space-y-2">
-                      {relato.midiaPreview.map((src, idx) => (
-                        <div key={idx}>
+                      {relato.midiaPreview.map((src) => (
+                        <div key={`${relato.id ?? relato.titulo}-${src}`}>
                           {src.includes('video') ? (
                             <video controls src={src} className="max-w-full h-auto rounded" />
                           ) : (
-                            <img src={src} alt={`midia ${idx}`} className="max-w-full h-auto rounded" />
+                            <img src={src} alt={`midia`} className="max-w-full h-auto rounded" />
                           )}
                         </div>
                       ))}
@@ -123,6 +119,6 @@ export default function RelatosPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </ProtectedPage>
   );
 }

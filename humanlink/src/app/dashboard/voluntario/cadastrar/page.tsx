@@ -3,6 +3,8 @@
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
 import { useState, useEffect } from 'react'
+import api from '@/services/api'
+import ProtectedPage from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function CadastroVoluntarioPage() {
   const [form, setForm] = useState({
@@ -45,13 +47,36 @@ export default function CadastroVoluntarioPage() {
     }
   }, [form.cep])
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    alert('Cadastro de voluntário enviado com sucesso!')
+    try {
+      const payload = {
+        id: 0,
+        nome: form.nome,
+        tipoDeAjuda: form.tipoAjuda,
+        disponibilidade: form.disponibilidade,
+        dataRegistro: new Date().toISOString(),
+        idUsuario: 0,
+        telefone: form.telefone,
+        email: form.email
+      }
+
+      console.log('Enviando voluntário:', payload)
+
+      const res = await api.post('/voluntarios', payload)
+      if (res.status === 200 || res.status === 201) {
+        alert('Cadastro de voluntário enviado com sucesso!')
+      } else {
+        alert('Erro ao cadastrar voluntário.')
+      }
+    } catch (err) {
+      console.error('Erro ao cadastrar voluntário:', err)
+      alert('Erro ao conectar com o servidor.')
+    }
   }
 
   return (
-    <>
+    <ProtectedPage>
       <Header />
       <main className="bg-[#FDF7F0] min-h-screen px-6 py-10 flex justify-center">
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-md p-8 max-w-xl w-full space-y-4">
@@ -215,6 +240,6 @@ export default function CadastroVoluntarioPage() {
         </form>
       </main>
       <Footer />
-    </>
+    </ProtectedPage>
   )
 }

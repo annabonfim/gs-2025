@@ -1,8 +1,7 @@
 
 
 import { NextResponse } from 'next/server'
-
-const API_URL = '' // insira aqui a URL do backend Java
+const API_URL = 'https://humanlink-api-production.up.railway.app/humanlink'
 
 export async function POST(req: Request) {
   const novaDoacao = await req.json()

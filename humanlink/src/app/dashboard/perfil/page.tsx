@@ -1,22 +1,24 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import api from '@/services/api'
+import { useRouter } from 'next/navigation'
+import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function PerfilPage() {
-  const initialForm = {
-    nome: 'Anna Bonfim',
-    email: 'anna@example.com',
+  const [editando, setEditando] = useState(false)
+  const [form, setForm] = useState({
+    nome: '',
+    email: '',
     novaSenha: '',
     senhaAtual: '',
-    telefone: '(11) 99999-8888',
-    endereco: 'Rua das Flores, 123',
-  }
-
-  const [editando, setEditando] = useState(false)
-  const [form, setForm] = useState(initialForm)
-
+    telefone: '',
+    cpf: '',
+    data_criacao: ''
+  })
+  const [usuarioId, setUsuarioId] = useState<number | null>(null)
   const [userTipos, setUserTipos] = useState<string[]>(['Voluntária'])
   const userLocalizacao = 'São Paulo - SP'
 
@@ -25,30 +27,106 @@ export default function PerfilPage() {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const emailChanged = form.email !== initialForm.email
-    const senhaChanged = form.novaSenha !== ''
-    if ((emailChanged || senhaChanged) && form.senhaAtual === '') {
+    if ((form.novaSenha !== '' || form.senhaAtual !== '') && form.senhaAtual === '') {
       alert('Por favor, insira sua senha atual para confirmar as alterações.')
       return
     }
-    console.log('Salvando alterações:', { ...form, userTipos })
-    setEditando(false)
-    setForm(prev => ({ ...prev, senhaAtual: '', novaSenha: '' }))
+    // Funções de formatação encapsuladas dentro de handleSubmit
+    const formatarCpf = (cpf: string) =>
+      cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
+
+    const formatarTelefone = (telefone: string) =>
+      telefone.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+
+    try {
+      const payload = {
+        id_usuario: usuarioId!,
+        nome: form.nome,
+        cpf: formatarCpf(form.cpf),
+        email: form.email,
+        telefone: formatarTelefone(form.telefone),
+        tipo_usuario: userTipos[0].toUpperCase()
+      }
+
+      console.log("Data de criação formatada:", form.data_criacao)
+      console.log('Payload enviado para atualização:', payload)
+      await api.put(`/usuario/${payload.id_usuario}`, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      alert('Perfil atualizado com sucesso!')
+      setEditando(false)
+      setForm(prev => ({ ...prev, senhaAtual: '', novaSenha: '' }))
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error)
+      alert('Erro ao atualizar usuário.')
+    }
   }
 
   const cancelarEdicao = () => {
     setEditando(false)
-    setForm(initialForm)
+    if (usuarioId) {
+      fetchUsuario()
+    }
   }
 
-  // Modal de confirmação de desativação de conta
   const [mostrarModal, setMostrarModal] = useState(false)
   const [senhaConfirmacao, setSenhaConfirmacao] = useState("")
 
+    useEffect(() => {
+      const idSalvo = localStorage.getItem('usuarioId')
+      console.log(idSalvo)
+      if (idSalvo) {
+        const id = Number(idSalvo)
+        setUsuarioId(id)
+
+        api.get(`/usuario/${id}`)
+          .then(res => {
+            const data = res.data
+            setForm(prev => ({
+              ...prev,
+              nome: data.nome || '',
+              email: data.email || '',
+              telefone: data.telefone || '',
+              cpf: data.cpf || '',
+              data_criacao: new Date(data.data_criacao).toISOString().slice(0, 10),
+              novaSenha: '',
+              senhaAtual: '',
+            }))
+            setUserTipos([data.tipo_usuario || ''])
+          })
+          .catch(error => {
+            console.error('Erro ao buscar dados do usuário:', error)
+          })
+      }
+    }, [])
+
+  async function fetchUsuario() {
+    if (!usuarioId) return
+    try {
+      const res = await api.get(`/usuario/${usuarioId}`)
+      const data = res.data
+      setForm(prev => ({
+        ...prev,
+        nome: data.nome || '',
+        email: data.email || '',
+        telefone: data.telefone || '',
+        cpf: data.cpf || '',
+        data_criacao: new Date(form.data_criacao).toISOString().slice(0, 10),        
+        novaSenha: '',
+        senhaAtual: '',
+      }))
+      setUserTipos([data.tipo_usuario || ''])
+    } catch (error) {
+      console.error('Erro ao buscar dados do usuário:', error)
+    }
+  }
+
   return (
-    <>
+    <ProtectedRoute>
       <Header />
       <main className="bg-[#FDF7F0] min-h-screen px-6 py-10 flex flex-col items-center">
         <div className="bg-white shadow-md rounded-md p-8 max-w-2xl w-full text-center">
@@ -89,9 +167,6 @@ export default function PerfilPage() {
               {form.telefone && (
                 <p><span className="font-semibold">Telefone:</span> {form.telefone}</p>
               )}
-              {form.endereco && (
-                <p><span className="font-semibold">Endereço:</span> {form.endereco}</p>
-              )}
             </div>
           )}
 
@@ -109,13 +184,18 @@ export default function PerfilPage() {
                     className="w-full border border-gray-300 rounded px-3 py-2" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">Telefone</label>
-                  <input type="text" name="telefone" value={form.telefone} onChange={handleChange}
-                    className="w-full border border-gray-300 rounded px-3 py-2" />
+                  <label className="block text-sm font-medium">CPF</label>
+                  <input
+                    type="text"
+                    name="cpf"
+                    value={form.cpf}
+                    readOnly
+                    className="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100"
+                  />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">Endereço</label>
-                  <input type="text" name="endereco" value={form.endereco} onChange={handleChange}
+                  <label className="block text-sm font-medium">Telefone</label>
+                  <input type="text" name="telefone" value={form.telefone} onChange={handleChange}
                     className="w-full border border-gray-300 rounded px-3 py-2" />
                 </div>
                 <div>
@@ -152,7 +232,7 @@ export default function PerfilPage() {
                     value={form.senhaAtual}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded px-3 py-2"
-                    required={form.email !== initialForm.email || form.novaSenha !== ''}
+                    required={form.novaSenha !== ''}
                   />
                 </div>
                 <div className="flex justify-end gap-4 mt-4">
@@ -209,6 +289,6 @@ export default function PerfilPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </ProtectedRoute>
   )
 }

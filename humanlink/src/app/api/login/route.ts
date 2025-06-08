@@ -1,14 +1,13 @@
-
-
 import { NextResponse } from 'next/server'
 
-const API_URL = '' // Insira aqui a URL da API Java
+const API_URL = 'https://humanlink-api-production.up.railway.app/humanlink/usuario' 
+
 
 export async function POST(req: Request) {
   const credentials = await req.json()
 
   try {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_URL}/usuario/{idUsuario}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
