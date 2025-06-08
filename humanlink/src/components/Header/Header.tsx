@@ -55,12 +55,12 @@ export default function Header() {
           </>
         )}
 
-        {pathname.startsWith('/dashboard') || pathname.startsWith('/mapa') || pathname.startsWith('/doacoes') || pathname.startsWith('/necessidades') || pathname.startsWith('/relatos') || pathname === '/recursos' ? (
+        {pathname.startsWith('/dashboard') || pathname.startsWith('/mapa') || pathname.startsWith('/doacoes') || pathname.startsWith('/necessidades') || pathname.startsWith('/relatos') || pathname.startsWith('/campanhas') || pathname === '/recursos' ? (
           <>
             <Link href="/dashboard" className="text-[#0C3B5D] hover:underline">Painel</Link>
             <Link href="/dashboard/mapa" className="text-[#0C3B5D] hover:underline">Mapa</Link>
             <Link href="/dashboard/doacoes" className="text-[#0C3B5D] hover:underline">Doações</Link>
-            <Link href="/dashboard/necessidades" className="text-[#0C3B5D] hover:underline">Necessidades</Link>
+            <Link href="/dashboard/campanha-humanitaria" className="text-[#0C3B5D] hover:underline">Campanhas</Link>
             <Link href="/dashboard/voluntario" className="text-[#0C3B5D] hover:underline">Voluntário</Link>
             <Link href="/dashboard/relatos" className="text-[#0C3B5D] hover:underline">Relatos</Link>
             <Link href="/recursos" className="text-[#0C3B5D] hover:underline">Recursos</Link>

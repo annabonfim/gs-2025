@@ -1,6 +1,28 @@
+"use client"
 import Link from "next/link"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import api from "@/services/api"
 
 export default function ContaDesativada() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const usuarioId = localStorage.getItem("usuarioId")
+    if (usuarioId) {
+      api
+        .delete(`/usuario/${usuarioId}`)
+        .then(() => {
+          localStorage.removeItem("authToken")
+          localStorage.removeItem("usuarioId")
+        })
+        .catch((error) => {
+          console.error("Erro ao desativar conta:", error)
+          router.push("/erro")
+        })
+    }
+  }, [])
+
   return (
     <main className="min-h-screen bg-[#FDF7F0] flex flex-col items-center justify-center px-4 text-center">
       <img src="/despedida.png" alt="Conta desativada" className="w-40 mb-4" />

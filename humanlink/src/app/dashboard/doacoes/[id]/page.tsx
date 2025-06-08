@@ -11,16 +11,19 @@ type Doacao = {
   idRegistro: number
   tipoDoacao: string
   descricao: string
-  destino: string
+  destinoDoacao: string
   status?: string
   nomeDoador: string
+  contato: string
   dataDoacao: string
+  idUsuario: number
 }
 
 export default function DoacaoDetalhePage() {
   const params = useParams()
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id
   const [doacao, setDoacao] = useState<Doacao | null>(null)
+  const [usuario, setUsuario] = useState<{ nome: string; email: string } | null>(null)
 
   useEffect(() => {
     async function fetchDoacao() {
@@ -28,7 +31,11 @@ export default function DoacaoDetalhePage() {
         try {
           const res = await api.get(`/registro-doacao/${id}`)
           const data = res.data
+          console.log(data)
           setDoacao(data)
+          const usuarioRes = await api.get(`/usuario/${data.idUsuario}`)
+          const usuario = usuarioRes.data
+          setUsuario(usuario)
         } catch (error) {
           console.error('Erro ao carregar doação:', error)
         }
@@ -51,8 +58,9 @@ export default function DoacaoDetalhePage() {
             <h1 className="text-2xl font-bold text-[#0C3B5D] mb-6">{doacao.tipoDoacao}</h1>
             <p className="text-base text-gray-800 mb-4">{doacao.descricao}</p>
             <ul className="text-gray-800 text-sm space-y-2">
-              <li><span className="font-semibold">Destino:</span> {doacao.destino}</li>
-              <li><span className="font-semibold">Doador:</span> {doacao.nomeDoador}</li>
+              <li><span className="font-semibold">Destino:</span> {doacao.destinoDoacao}</li>
+              <li><span className="font-semibold">Doador:</span> {usuario?.nome || 'Não informado'}</li>
+              <li><span className="font-semibold">Contato:</span> {usuario?.email || 'Não informado'}</li>
               <li><span className="font-semibold">Data:</span> {new Date(doacao.dataDoacao).toLocaleString()}</li>
             </ul>
           </div>

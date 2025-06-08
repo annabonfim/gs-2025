@@ -39,13 +39,13 @@ export default function DoacoesPage() {
         <div className="space-y-6">
           {doacoes.map((doacao: any) => (
             <Card
-              key={doacao.idRegistro}
+              key={`doacao-${doacao.id ?? Math.random().toString(36).substr(2, 9)}`}
               title={doacao.tipoDoacao || 'Doação'}
               description={doacao.descricao || 'Sem descrição'}
               status="disponivel"
               autor={doacao.nomeDoador || 'Anônimo'}
-              hora={new Date(doacao.dataDoacao || '').toLocaleString()}
-              href={`/dashboard/doacoes/${doacao.idRegistro}`}
+              hora={new Date(doacao.dataDoacao).toLocaleDateString('pt-BR')}
+              href={`/dashboard/doacoes/${doacao.id}`}
             />
           ))}
         </div>

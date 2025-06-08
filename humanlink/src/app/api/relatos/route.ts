@@ -2,9 +2,8 @@
 
 import { NextResponse } from 'next/server'
 
-const API_URL = '' // Defina aqui sua URL do backend Java quando disponível
+const API_URL = 'https://humanlink-api-production.up.railway.app/humanlink'
 
-// GET - Buscar relatos da API Java
 export async function GET() {
   try {
     const res = await fetch(`${API_URL}/relatos`)
@@ -16,7 +15,6 @@ export async function GET() {
   }
 }
 
-// POST - Enviar novo relato para a API Java
 export async function POST(request: Request) {
   try {
     const data = await request.json()
@@ -33,7 +31,6 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT - Atualizar relato existente
 export async function PUT(request: Request) {
   try {
     const data = await request.json()
@@ -50,7 +47,6 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE - Remover relato por ID
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json()

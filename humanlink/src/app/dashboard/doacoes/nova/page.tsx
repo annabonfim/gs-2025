@@ -37,24 +37,22 @@ export default function NovaDoacaoPage() {
     if (typeof window === 'undefined') return;
 
     try {
+      const authId = localStorage.getItem('usuarioId');
+      if (!authId) {
+        alert('Usuário não autenticado. Faça login novamente.');
+        return;
+      }
+
       const payload = {
-        idAreaDesastre: 1,
+        tipoDoacao: form.tipo,
         quantidadeDoacao: Number(form.quantidade),
         descricao: form.descricao,
-        destino: form.destino,
-        nomeDoador: form.nome,
-        contato: form.contato,
-        endereco: {
-          cep: form.cep,
-          logradouro: form.endereco,
-          numero: form.numero,
-          complemento: form.complemento,
-          cidade: form.cidade,
-          estado: form.estado,
-        },
-        tipoDoacao: form.tipo,
-        dataDoacao: new Date().toISOString(),
-        idUsuario: Number(localStorage.getItem('authId'))
+        destinoDoacao: form.destino,
+        dataDoacao: new Date().toISOString().split('T')[0],
+        status: 'PENDENTE',
+        idUsuario: Number(authId),
+        idAreaDesastre: 1,
+        idCampanhaHumanitaria: 1
       }
 
       console.log('Payload final enviado:', payload)
@@ -69,7 +67,7 @@ export default function NovaDoacaoPage() {
     } catch (error: any) {
       console.error('Erro ao enviar doação:', error)
       if (error.response?.data) {
-        console.error('Resposta do backend:', error.response.data)
+        console.error('Erro detalhado do backend:', error.response.data)
       }
       alert('Erro de conexão ao registrar a doação.')
     }

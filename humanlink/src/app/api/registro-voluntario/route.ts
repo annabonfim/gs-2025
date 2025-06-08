@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const API_URL = '' // insira aqui a URL do endpoint Java quando estiver disponível
+const API_URL = 'https://humanlink-api-production.up.railway.app/humanlink'
 
 export async function POST(req: Request) {
   const novoRegistro = await req.json()
