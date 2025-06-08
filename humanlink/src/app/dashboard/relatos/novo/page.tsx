@@ -9,6 +9,7 @@ import Button from '@/components/Button/Button'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
 import ProtectedPage from '@/components/ProtectedRoute/ProtectedRoute'
+import Image from 'next/image'
 
 export default function NovoRelatoPage() {
   const [form, setForm] = useState({
@@ -256,10 +257,12 @@ export default function NovoRelatoPage() {
                       className="max-w-full h-auto rounded"
                     />
                   ) : (
-                    <img
+                    <Image
                       src={src}
                       alt={`preview ${idx}`}
-                      className="max-w-full h-auto rounded"
+                      width={600}
+                      height={400}
+                      className="w-full h-auto rounded object-contain"
                     />
                   )}
                 </div>

@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     const data = await response.json()
     return NextResponse.json(data, { status: 201 })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao comunicar com o backend' }, { status: 500 })
   }
 }
@@ -44,7 +44,7 @@ export async function PUT(req: Request) {
 
     const data = await response.json()
     return NextResponse.json(data)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao comunicar com o backend' }, { status: 500 })
   }
 }

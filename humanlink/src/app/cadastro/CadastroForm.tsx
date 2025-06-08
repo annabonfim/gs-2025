@@ -103,11 +103,13 @@ export default function CadastroForm() {
       } else {
         alert('Erro ao cadastrar. Verifique os dados e tente novamente.');
       }
-    } catch (err: any) {
+    } catch (err) {
+      const axiosError = err as import('axios').AxiosError;
+
       alert('Erro ao conectar com o servidor.');
-      console.error('Erro completo:', err);
-      if (err.response) {
-        console.error('Detalhes da resposta do servidor:', err.response.data);
+      console.error('Erro completo:', axiosError);
+      if (axiosError.response) {
+        console.error('Detalhes da resposta do servidor:', axiosError.response.data);
       }
     }
   }

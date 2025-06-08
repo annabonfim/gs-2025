@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   const credentials = await req.json()
 
   try {
-    const response = await fetch(`${API_URL}/usuario/{idUsuario}`, {
+    const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     const data = await response.json()
     return NextResponse.json(data)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao comunicar com o backend' }, { status: 500 })
   }
 }

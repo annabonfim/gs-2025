@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import 'leaflet/dist/leaflet.css'
+import Image from 'next/image'
 const Map = dynamic(() => import('@/components/Map/Map'), { ssr: false })
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
@@ -20,15 +21,15 @@ export default function MapaPage() {
 
         <div className="flex gap-4 justify-center mt-4 max-w-5xl mx-auto text-[#0C3B5D]">
           <div className="flex items-center gap-2">
-            <img src="/shelter.png" alt="Abrigo" className="w-6 h-8" />
+            <Image src="/shelter.png" alt="Abrigo" width={24} height={32} />
             <span>Abrigo</span>
           </div>
           <div className="flex items-center gap-2">
-            <img src="/donation.png" alt="Ponto de Doação" className="w-6 h-8" />
+            <Image src="/donation.png" alt="Ponto de Doação" width={24} height={32} />
             <span>Ponto de Doação</span>
           </div>
           <div className="flex items-center gap-2">
-            <img src="/medical.png" alt="Atendimento Médico" className="w-6 h-8" />
+            <Image src="/medical.png" alt="Atendimento Médico" width={24} height={32} />
             <span>Atendimento Médico</span>
           </div>
         </div>

@@ -7,7 +7,7 @@ export function useAuth() {
   useEffect(() => {
     const tokenData = localStorage.getItem('authToken')
     if (tokenData) {
-      const { token, expiresAt } = JSON.parse(tokenData)
+      const { expiresAt } = JSON.parse(tokenData)
       const now = new Date().getTime()
       setIsAuthenticated(now < expiresAt)
     } else {

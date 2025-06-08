@@ -1,5 +1,3 @@
-
-
 import { NextResponse } from 'next/server'
 
 const API_URL = 'https://humanlink-api-production.up.railway.app/humanlink'
@@ -10,7 +8,7 @@ export async function GET() {
     if (!res.ok) throw new Error('Erro ao buscar relatos')
     const data = await res.json()
     return NextResponse.json(data)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Falha ao buscar relatos' }, { status: 500 })
   }
 }
@@ -26,7 +24,7 @@ export async function POST(request: Request) {
     if (!res.ok) throw new Error('Erro ao enviar relato')
     const response = await res.json()
     return NextResponse.json(response, { status: 201 })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Falha ao enviar relato' }, { status: 500 })
   }
 }
@@ -42,7 +40,7 @@ export async function PUT(request: Request) {
     if (!res.ok) throw new Error('Erro ao atualizar relato')
     const response = await res.json()
     return NextResponse.json(response)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Falha ao atualizar relato' }, { status: 500 })
   }
 }
@@ -55,7 +53,7 @@ export async function DELETE(request: Request) {
     })
     if (!res.ok) throw new Error('Erro ao remover relato')
     return NextResponse.json({ message: 'Relato removido com sucesso' })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Falha ao remover relato' }, { status: 500 })
   }
 }

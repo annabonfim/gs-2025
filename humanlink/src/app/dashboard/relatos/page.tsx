@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import api from '@/services/api';
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
@@ -106,7 +107,7 @@ export default function RelatosPage() {
                           {src.includes('video') ? (
                             <video controls src={src} className="max-w-full h-auto rounded" />
                           ) : (
-                            <img src={src} alt={`midia`} className="max-w-full h-auto rounded" />
+                            <Image src={src} alt="midia" width={800} height={600} className="max-w-full h-auto rounded" />
                           )}
                         </div>
                       ))}

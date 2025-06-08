@@ -11,7 +11,7 @@ export async function GET() {
 
     const notificacoes = await response.json()
     return NextResponse.json(notificacoes)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao buscar notificações' }, { status: 500 })
   }
 }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     const nova = await response.json()
     return NextResponse.json(nova)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao enviar notificação' }, { status: 500 })
   }
 }

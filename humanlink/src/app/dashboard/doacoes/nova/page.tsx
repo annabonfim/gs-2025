@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { AxiosError } from 'axios'
 import Input from '@/components/Input/Input'
 import Select from '@/components/Select/Select'
 import TextArea from '@/components/TextArea/TextArea'
@@ -64,12 +65,17 @@ export default function NovaDoacaoPage() {
       } else {
         alert('Erro ao registrar doação.')
       }
-    } catch (error: any) {
-      console.error('Erro ao enviar doação:', error)
-      if (error.response?.data) {
-        console.error('Erro detalhado do backend:', error.response.data)
+    } catch (error: unknown) {
+      console.error('Erro ao enviar doação:', error);
+      const axiosError = error as AxiosError<{ message: string }>;
+
+      if (
+        axiosError?.response?.data
+      ) {
+        console.error('Erro detalhado do backend:', axiosError.response.data);
       }
-      alert('Erro de conexão ao registrar a doação.')
+
+      alert('Erro de conexão ao registrar a doação.');
     }
   }
 

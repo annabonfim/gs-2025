@@ -1,15 +1,13 @@
 'use client'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, useMemo } from 'react'
 import Header from '@/components/Header/Header'
 import Card from '@/components/Card/Card'
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function DashboardPage() {
-  const router = useRouter()
 
-  const mockCards = [
+  const mockCards = useMemo(() => [
     {
       id: 1,
       title: 'Necessidade urgente',
@@ -26,7 +24,7 @@ export default function DashboardPage() {
       autor: 'Doador Anônimo',
       hora: 'há 3 horas'
     }
-  ]
+  ], []);
 
   const [cards, setCards] = useState<typeof mockCards>([])
 
@@ -38,7 +36,7 @@ export default function DashboardPage() {
         console.warn('Usando dados mockados do dashboard');
         setCards(mockCards);
       })
-  }, [])
+  }, [mockCards])
 
   return (
     <ProtectedRoute>

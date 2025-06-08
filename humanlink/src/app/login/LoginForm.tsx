@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/Button/Button'
@@ -25,7 +27,7 @@ export default function LoginForm() {
       console.log('Tentando logar com:', form.email, form.senha)
 
       const usuarioEncontrado = usuarios.find(
-        (u: any) =>
+        (u: { email: string; senha: string; id_usuario: number }) =>
           u.email.trim().toLowerCase() === form.email.trim().toLowerCase()
       )
 
@@ -40,8 +42,8 @@ export default function LoginForm() {
       } else {
         alert('Credenciais inválidas. Tente novamente.')
       }
-    } catch (err: any) {
-      alert(`Erro ao tentar logar: ${err.message || err}`)
+    } catch (err: unknown) {
+      alert(`Erro ao tentar logar: ${err instanceof Error ? err.message : 'Erro desconhecido'}`)
       console.error('Erro no login:', err)
     }
   }
@@ -49,7 +51,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-md p-8 max-w-md w-full space-y-6">
       <div className="flex justify-center">
-        <img src="/logo-sem-fundo.png" alt="HumanLink logo" className="h-32 mb-2" />
+        <Image src="/logo-sem-fundo.png" alt="HumanLink logo" width={128} height={128} className="mb-2" />
       </div>
       <h1 className="text-3xl font-bold text-center text-[#0C3B5D]">Login</h1>
 

@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
 import api from '@/services/api'
-import { useRouter } from 'next/navigation'
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
 export default function PerfilPage() {

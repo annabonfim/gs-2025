@@ -9,8 +9,16 @@ import Link from 'next/link'
 import api from '@/services/api'
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 
+interface Doacao {
+  id: number
+  tipoDoacao: string
+  descricao: string
+  dataDoacao: string
+  nomeDoador?: string
+}
+
 export default function DoacoesPage() {
-  const [doacoes, setDoacoes] = useState([])
+  const [doacoes, setDoacoes] = useState<Doacao[]>([])
 
   useEffect(() => {
     async function fetchDoacoes() {
@@ -37,7 +45,7 @@ export default function DoacoesPage() {
           </Link>
         </div>
         <div className="space-y-6">
-          {doacoes.map((doacao: any) => (
+          {doacoes.map((doacao) => (
             <Card
               key={`doacao-${doacao.id ?? Math.random().toString(36).substr(2, 9)}`}
               title={doacao.tipoDoacao || 'Doação'}

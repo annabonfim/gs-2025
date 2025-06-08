@@ -1,13 +1,12 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 export default function Header() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
-  const [notificacoes, setNotificacoes] = useState(0);
-  const [visto, setVisto] = useState(false);
   const router = useRouter()
 
   const [mounted, setMounted] = useState(false)
@@ -16,15 +15,6 @@ export default function Header() {
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  useEffect(() => {
-    async function fetchNotificacoes() {
-      // Simulação de requisição assíncrona
-      const res = await new Promise(resolve => setTimeout(() => resolve({ naoLidas: 3 }), 1000));
-      setNotificacoes((res as { naoLidas: number }).naoLidas);
-    }
-    fetchNotificacoes();
-  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -45,7 +35,7 @@ export default function Header() {
     <header className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
       <Link href="/" className="flex items-center space-x-2">
         <span className="text-[#0C3B5D] text-2xl font-bold">HumanLink</span>
-        <img src="/logo-sem-fundo.png" alt="Logo HumanLink" className="h-12 w-auto" />
+        <Image src="/logo-sem-fundo.png" alt="Logo HumanLink" width={48} height={48} />
       </Link>
       <nav className="space-x-4 flex items-center">
         {['/', '/login', '/cadastro', '/recursos'].includes(pathname) && !pathname.startsWith('/dashboard') && (
@@ -70,7 +60,6 @@ export default function Header() {
                 className="relative text-[#0C3B5D] focus:outline-none"
                 onClick={() => {
                   router.push('/dashboard/notificacoes');
-                  setVisto(true);
                 }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#0C3B5D]">
