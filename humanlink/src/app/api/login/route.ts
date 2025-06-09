@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 
-const API_URL = 'https://humanlink-api-production.up.railway.app/humanlink/usuario' 
+const BASE_URL = 'https://humanlink-api-production.up.railway.app/humanlink' 
 
 
 export async function POST(req: Request) {
   const credentials = await req.json()
 
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(`${BASE_URL}/usuario`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

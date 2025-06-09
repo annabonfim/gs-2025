@@ -1,30 +1,30 @@
-
-
-
 import { NextResponse } from 'next/server'
 
-const API_BASE = 'https://humanlink-api-production.up.railway.app/humanlink/campanhas-humanitarias'
-const HEADERS = {
-  'Content-Type': 'application/json',
-  'X-API-Key': 'chave123'
-}
+const BASE_URL = 'https://humanlink-api-production.up.railway.app/humanlink'
+
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const id = searchParams.get('id')
 
-  const url = id ? `${API_BASE}/${id}` : API_BASE
+  const url = id ? `${BASE_URL}/campanhas-humanitarias/${id}` : `${BASE_URL}/campanhas-humanitarias`
 
-  const res = await fetch(url, { headers: HEADERS })
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
   const data = await res.json()
   return NextResponse.json(data)
 }
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const res = await fetch(API_BASE, {
+  const res = await fetch(`${BASE_URL}/campanhas-humanitarias`, {
     method: 'POST',
-    headers: HEADERS,
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   })
 
@@ -41,9 +41,11 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'ID é obrigatório para atualizar.' }, { status: 400 })
   }
 
-  const res = await fetch(`${API_BASE}/${id}`, {
+  const res = await fetch(`${BASE_URL}/campanhas-humanitarias/${id}`, {
     method: 'PUT',
-    headers: HEADERS,
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   })
 
@@ -59,9 +61,11 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'ID é obrigatório para deletar.' }, { status: 400 })
   }
 
-  const res = await fetch(`${API_BASE}/${id}`, {
+  const res = await fetch(`${BASE_URL}/campanhas-humanitarias/${id}`, {
     method: 'DELETE',
-    headers: HEADERS,
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
 
   const data = await res.json()

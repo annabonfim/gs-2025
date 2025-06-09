@@ -38,10 +38,9 @@ export default function Header() {
         <Image src="/logo-sem-fundo.png" alt="Logo HumanLink" width={48} height={48} />
       </Link>
       <nav className="space-x-4 flex items-center">
-        {['/', '/login', '/cadastro', '/recursos'].includes(pathname) && !pathname.startsWith('/dashboard') && (
+        {['/login', '/cadastro', '/recursos'].includes(pathname) && !pathname.startsWith('/dashboard') && (
           <>
             <Link href="/" className="text-[#0C3B5D] hover:underline">Início</Link>
-            <Link href="/sobre" className="text-[#0C3B5D] hover:underline">Sobre</Link>
           </>
         )}
 
